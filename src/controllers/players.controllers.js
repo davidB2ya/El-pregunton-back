@@ -38,6 +38,29 @@ playersRouter.post('/new-player', async (req, res) => {
     }
 })
 
+//  Put update a player
+playersRouter.put('/update-player', async (req, res) => {
+    
+    const { nickname, score } = req.body
+
+    const player = await Player.findOne({ nickname });
+    console.log(player)
+    Player.updateOne(
+        { nickname: nickname },
+        {
+            $set: {
+                nickname: nickname,
+                historyScore: player.historyScore + score,
+                attempts: player.attempts + 1,
+            }
+        },
+    )
+        .then(function () {
+            success(req, res, 'Player updated successfully!', 200)
+        })
+        .catch(err => res.status(500).json({ msg: err.message }))
+})
+
 // Get search a PLayer
 playersRouter.get('/one/:id', async (req, res) => {
     let id = req.params.id
